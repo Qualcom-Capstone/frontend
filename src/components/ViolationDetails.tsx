@@ -36,7 +36,7 @@ const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatus
   };
 
   return (
-    <div className="p-6 h-full overflow-y-auto">
+    <div className="p-4 h-full overflow-y-auto">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-white">Violation Details</h2>
         <div className="flex space-x-2">
@@ -50,7 +50,7 @@ const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatus
         </div>
       </div>
       
-      <div className="mb-6 rounded-xl overflow-hidden h-64">
+      <div className="mb-4 rounded-lg overflow-hidden h-48">
         <img 
           src={violation.image} 
           alt={`Vehicle ${violation.plateNumber}`} 
@@ -60,14 +60,14 @@ const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatus
       
       <div className="space-y-6">
         <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700">
-          <h3 className="text-lg font-semibold mb-4 text-white">License Plate</h3>
+          <h3 className="text-lg font-semibold mb-2 text-white">License Plate</h3>
           <div className="bg-gray-900 p-4 rounded-md text-center">
-            <span className="text-3xl font-bold">{violation.plateNumber}</span>
+            <span className="text-xl font-bold">{violation.plateNumber}</span>
           </div>
         </div>
         
         <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700">
-          <h3 className="text-lg font-semibold mb-4 text-white">Detected Speed</h3>
+          <h3 className="text-lg font-semibold mb-2 text-white">Detected Speed</h3>
           <div className="bg-gray-900 p-4 rounded-md text-center">
             <span className={`text-3xl font-bold ${getSpeedLevelClass(violation.speed)}`}>
               {violation.speed} km/h
@@ -77,7 +77,7 @@ const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatus
         
         <div className="flex justify-between items-center bg-gray-800/50 rounded-xl p-5 border border-gray-700">
           <label htmlFor="checkStatus" className="text-white font-medium">Mark as checked</label>
-          <div className="relative inline-block w-12 align-middle select-none">
+          <div className="relative inline-block w-10 align-middle select-none">
             <input 
               type="checkbox" 
               id="checkStatus" 
@@ -93,7 +93,7 @@ const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatus
             >
               <span 
                 className={`block h-6 w-6 rounded-full bg-white transform transition-transform duration-200 ease-in-out ${
-                  isChecked ? 'translate-x-6' : 'translate-x-0'
+                  isChecked ? 'translate-x-4' : 'translate-x-0'
                 }`} 
               />
             </label>
@@ -101,41 +101,41 @@ const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatus
         </div>
         
         <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700">
-          <h3 className="text-lg font-semibold mb-4 text-white">Fine Amount (KRW)</h3>
+          <h3 className="text-lg font-semibold mb-2 text-white">Fine Amount (KRW)</h3>
           <div className="bg-gray-900 p-4 rounded-md text-center">
             <span className="text-3xl font-bold text-white">{violation.fineAmount?.toLocaleString()}</span>
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 flex items-start space-x-3">
-            <MapPin className="w-5 h-5 text-blue-400 mt-0.5" />
+            <MapPin className="w-4 h-4 text-blue-400 mt-0.5" />
             <div>
-              <h3 className="text-sm font-medium text-gray-400">Location</h3>
+              <h3 className="text-xs font-medium text-gray-400">Location</h3>
               <p className="text-white">{violation.location || '알 수 없음'}</p>
             </div>
           </div>
           
           <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 flex items-start space-x-3">
-            <CalendarDays className="w-5 h-5 text-purple-400 mt-0.5" />
+            <CalendarDays className="w-4 h-4 text-purple-400 mt-0.5" />
             <div>
-              <h3 className="text-sm font-medium text-gray-400">Date & Time</h3>
+              <h3 className="text-xs font-medium text-gray-400">Date & Time</h3>
               <p className="text-white">{violation.createdAt ? formatDate(violation.createdAt) : violation.date}</p>
             </div>
           </div>
           
           <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 flex items-start space-x-3">
-            <Car className="w-5 h-5 text-green-400 mt-0.5" />
+            <Car className="w-4 h-4 text-green-400 mt-0.5" />
             <div>
-              <h3 className="text-sm font-medium text-gray-400">vehicle type</h3>
+              <h3 className="text-xs font-medium text-gray-400">vehicle type</h3>
               <p className="text-white">{violation.vehicleType || '알 수 없음'}</p>
             </div>
           </div>
           
           <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 flex items-start space-x-3">
-            <AlertCircle className="w-5 h-5 text-red-400 mt-0.5" />
+            <AlertCircle className="w-4 h-4 text-red-400 mt-0.5" />
             <div>
-              <h3 className="text-sm font-medium text-gray-400">Risk Level</h3>
+              <h3 className="text-xs font-medium text-gray-400">Risk Level</h3>
               <p className={`font-medium ${
                 violation.dangerLevel === 'High' ? 'text-red-400' : 
                 violation.dangerLevel === 'Medium' ? 'text-orange-400' : 'text-yellow-400'

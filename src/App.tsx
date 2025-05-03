@@ -87,7 +87,7 @@ function App() {
       />
       
       <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
-        <div className={`flex-1 ${selectedViolation ? 'md:w-1/2' : 'w-full'}`}>
+        <div className={`flex-1 ${selectedViolation ? 'md:w-2/3' : 'w-full'}`}>
           <Dashboard 
             violations={sortedViolations} 
             stats={stats} 
@@ -98,7 +98,7 @@ function App() {
         </div>
         
         {selectedViolation && (
-          <div className="flex-1 md:w-1/2 border-l border-gray-700 h-full overflow-auto">
+          <div className="md:w-1/3 border-l border-gray-700 h-full overflow-auto">
             <ViolationDetails 
               violation={selectedViolation} 
               onStatusChange={handleStatusChange}
