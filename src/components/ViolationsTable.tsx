@@ -66,31 +66,31 @@ const ViolationsTable: React.FC<ViolationsTableProps> = ({
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                 <div className="h-12 w-16 rounded overflow-hidden">
                   <img 
-                    src={violation.image} 
-                    alt={`Vehicle ${violation.plateNumber}`} 
+                    src={violation.image_url}
+                    alt={`Vehicle ${violation.car_number}`}
                     className="h-full w-full object-cover"
                   />
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                {violation.plateNumber}
+                {violation.car_number}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm">
-                <span className={`font-medium ${getSpeedColor(violation.speed)}`}>
-                  {violation.speed}
+                <span className={`font-medium ${getSpeedColor(violation.car_speed)}`}>
+                  {violation.car_speed}
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                 <span className={`px-2 py-1 rounded-full text-xs ${
-                  violation.status === 'Checked' 
+                  violation.is_checked === true
                     ? 'bg-green-900/70 text-green-300'
                     : 'bg-red-900/70 text-red-300'
                 }`}>
-                  {violation.status}
+                  {violation.is_checked ? 'Checked' : 'Unchecked'}
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                {violation.date}
+                {violation.created_at}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 flex space-x-2">
                 <button 
