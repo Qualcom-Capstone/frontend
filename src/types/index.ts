@@ -1,14 +1,14 @@
 export interface Violation {
   id: number;
-  image: string;
-  plateNumber: string;
-  speed: number;
-  status: 'Checked' | 'Unchecked';
+  image_url: string;
+  car_number: string;
+  car_speed: number;
+  is_checked: boolean;
   date: string;
   location?: string;
   fineAmount?: number;
-  createdAt?: string;
-  updatedAt?: string;
+  created_at?: string;
+  updated_at?: string;
   lane?: number;
   vehicleType?: string;
   dangerLevel?: 'Low' | 'Medium' | 'High';

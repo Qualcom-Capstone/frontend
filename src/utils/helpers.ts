@@ -55,7 +55,7 @@ export const extractLaneStats = (violations: Violation[]) => {
       
       const data = laneMap.get(violation.lane)!;
       data.count += 1;
-      data.totalSpeed += violation.speed;
+      data.totalSpeed += violation.car_speed;
     }
   });
   
@@ -78,7 +78,7 @@ export const extractSpeedDistribution = (violations: Violation[]) => {
   
   const distribution = ranges.map(range => ({
     range: range.label,
-    count: violations.filter(v => v.speed >= range.min && v.speed < range.max).length,
+    count: violations.filter(v => v.car_speed >= range.min && v.car_speed < range.max).length,
     color: range.color
   }));
   
