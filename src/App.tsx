@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ActivitySquare } from 'lucide-react';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
@@ -7,10 +7,27 @@ import { Violation } from './types';
 import { mockViolations } from './data/mockData';
 
 function App() {
-  const [violations, setViolations] = useState<Violation[]>(mockViolations);
+  const [violations, setViolations] = useState<Violation[]>([]);
   const [selectedViolation, setSelectedViolation] = useState<Violation | null>(null);
   const [filterType, setFilterType] = useState<string>('All Violations');
   const [sortOrder, setSortOrder] = useState<string>('Newest');
+  const [loading, setLoading] = useState<boolean>(true);
+
+  // /cars/ get 에서 데이터 불러오기
+  useEffect(() => {
+    setLoading(true);
+    fetch('http://localhost:8000/api/v1/crud/cars/')
+        .then(res => res.json())
+        .then(data => {
+          // data.results 배열을 사용
+          setViolations(data.results);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error('API fetch error:', err);
+          setLoading(false);
+        });
+  }, []);
 
   const handleViolationSelect = (violation: Violation) => {
     // 이미 선택된 위반 사항을 다시 클릭하면 닫기
@@ -32,7 +49,7 @@ function App() {
     );
     
     if (selectedViolation && selectedViolation.id === id) {
-      setSelectedViolation({ ...selectedViolation, status: checked ? 'Checked' : 'Unchecked' });
+      setSelectedViolation({ ...selectedViolation, is_checked: checked });
     }
   };
 
@@ -49,20 +66,20 @@ function App() {
 
   const filteredViolations = violations.filter(violation => {
     if (filterType === 'All Violations') return true;
-    if (filterType === 'Checked') return violation.status === 'Checked';
-    if (filterType === 'Unchecked') return violation.status === 'Unchecked';
+    if (filterType === 'Checked') return violation.is_checked;
+    if (filterType === 'Unchecked') return !violation.is_checked;
     return true;
   });
 
   const sortedViolations = [...filteredViolations].sort((a, b) => {
     if (sortOrder === 'Newest') {
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     } else if (sortOrder === 'Oldest') {
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    } else if (sortOrder === 'Highest Speed') {
-      return b.speed - a.speed;
-    } else if (sortOrder === 'Lowest Speed') {
-      return a.speed - b.speed;
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    } else if (sortOrder === 'Highest speed') {
+      return b.car_speed - a.car_speed;
+    } else if (sortOrder === 'Lowest speed') {
+      return a.car_speed - b.car_speed;
     }
     return 0;
   });
@@ -70,10 +87,10 @@ function App() {
   // Calculate statistics
   const stats = {
     totalViolations: violations.length,
-    checked: violations.filter(v => v.status === 'Checked').length,
-    pendingReview: violations.filter(v => v.status === 'Unchecked').length,
+    checked: violations.filter(v => v.is_checked).length,
+    pendingReview: violations.filter(v => !v.is_checked).length,
     avgSpeed: Math.round(
-      violations.reduce((sum, v) => sum + v.speed, 0) / violations.length
+      violations.reduce((sum, v) => sum + v.car_speed, 0) / violations.length
     ),
   };
 
@@ -91,7 +108,7 @@ function App() {
           <Dashboard 
             violations={sortedViolations} 
             stats={stats} 
-            onSelectViolation={handleViolationSelect}
+            onSelectViolation={setSelectedViolation}
             onDeleteViolation={handleDeleteViolation}
             selectedViolationId={selectedViolation?.id}
           />
