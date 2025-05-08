@@ -12,10 +12,31 @@ interface ViolationDetailsProps {
 const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatusChange, onClose }) => {
   const [isChecked, setIsChecked] = useState(violation.is_checked);
   
-  const handleCheckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCheckChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
     setIsChecked(checked);
+
+    try {
+      const response = await fetch(
+          `http://localhost:8000/api/v1/crud/cars/${violation.id}/`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ is_checked: checked }),
+          }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to update status');
+      }
+
     onStatusChange(violation.id, checked);
+    } catch (error) {
+      console.error('Error updating status:', error);
+      setIsChecked(!checked);
+    }
   };
   
   // Get speed level classification for styling
