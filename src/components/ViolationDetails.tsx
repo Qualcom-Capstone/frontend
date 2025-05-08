@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Violation } from '../types';
 import { CalendarDays, MapPin, Car, AlertCircle, X } from 'lucide-react';
+import { getDangerLevel } from '../utils/helpers';
 
 interface ViolationDetailsProps {
   violation: Violation;
@@ -9,7 +10,7 @@ interface ViolationDetailsProps {
 }
 
 const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatusChange, onClose }) => {
-  const [isChecked, setIsChecked] = useState(violation.status === 'Checked');
+  const [isChecked, setIsChecked] = useState(violation.is_checked);
   
   const handleCheckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
@@ -52,8 +53,8 @@ const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatus
       
       <div className="mb-4 rounded-lg overflow-hidden h-48">
         <img 
-          src={violation.image} 
-          alt={`Vehicle ${violation.plateNumber}`} 
+          src={violation.image_url}
+          alt={`Vehicle ${violation.car_number}`}
           className="w-full h-full object-cover"
         />
       </div>
@@ -62,15 +63,15 @@ const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatus
         <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700">
           <h3 className="text-lg font-semibold mb-2 text-white">License Plate</h3>
           <div className="bg-gray-900 p-4 rounded-md text-center">
-            <span className="text-xl font-bold">{violation.plateNumber}</span>
+            <span className="text-xl font-bold">{violation.car_number}</span>
           </div>
         </div>
         
         <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700">
           <h3 className="text-lg font-semibold mb-2 text-white">Detected Speed</h3>
           <div className="bg-gray-900 p-4 rounded-md text-center">
-            <span className={`text-3xl font-bold ${getSpeedLevelClass(violation.speed)}`}>
-              {violation.speed} km/h
+            <span className={`text-3xl font-bold ${getSpeedLevelClass(violation.car_speed)}`}>
+              {violation.car_speed} km/h
             </span>
           </div>
         </div>
@@ -115,34 +116,36 @@ const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatus
               <p className="text-white">{violation.location || '알 수 없음'}</p>
             </div>
           </div>
-          
-          <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 flex items-start space-x-3">
-            <CalendarDays className="w-4 h-4 text-purple-400 mt-0.5" />
-            <div>
-              <h3 className="text-xs font-medium text-gray-400">Date & Time</h3>
-              <p className="text-white">{violation.createdAt ? formatDate(violation.createdAt) : violation.date}</p>
-            </div>
-          </div>
-          
-          <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 flex items-start space-x-3">
-            <Car className="w-4 h-4 text-green-400 mt-0.5" />
-            <div>
-              <h3 className="text-xs font-medium text-gray-400">vehicle type</h3>
-              <p className="text-white">{violation.vehicleType || '알 수 없음'}</p>
-            </div>
-          </div>
-          
+
           <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 flex items-start space-x-3">
             <AlertCircle className="w-4 h-4 text-red-400 mt-0.5" />
             <div>
               <h3 className="text-xs font-medium text-gray-400">Risk Level</h3>
               <p className={`font-medium ${
-                violation.dangerLevel === 'High' ? 'text-red-400' : 
-                violation.dangerLevel === 'Medium' ? 'text-orange-400' : 'text-yellow-400'
+                  getDangerLevel(violation.car_speed) === 'High' ? 'text-red-400' :
+                      getDangerLevel(violation.car_speed) === 'Medium' ? 'text-orange-400' : 'text-yellow-400'
               }`}>
-                {violation.dangerLevel === 'High' ? 'High' :
-                 violation.dangerLevel === 'Medium' ? 'Middle' :
-                 violation.dangerLevel === 'Low' ? 'Lowness' : 'Unknown'}
+                {getDangerLevel(violation.car_speed)}
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 flex items-start space-x-3">
+            <CalendarDays className="w-4 h-4 text-purple-400 mt-0.5" />
+            <div>
+              <h3 className="text-xs font-medium text-gray-400">Created At</h3>
+              <p className="text-white">
+                {violation.created_at ? formatDate(violation.created_at) : '알 수 없음'}
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 flex items-start space-x-3">
+            <CalendarDays className="w-4 h-4 text-blue-400 mt-0.5" />
+            <div>
+              <h3 className="text-xs font-medium text-gray-400">Last Updated</h3>
+              <p className="text-white">
+                {violation.updated_at ? formatDate(violation.updated_at) : '알 수 없음'}
               </p>
             </div>
           </div>
