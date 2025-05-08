@@ -42,7 +42,7 @@ function App() {
     setViolations(
       violations.map((violation) => {
         if (violation.id === id) {
-          return { ...violation, status: checked ? 'Checked' : 'Unchecked' };
+          return { ...violation, is_checked: checked};
         }
         return violation;
       })
