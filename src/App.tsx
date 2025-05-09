@@ -53,10 +53,24 @@ function App() {
     }
   };
 
-  const handleDeleteViolation = (id: number) => {
-    setViolations(violations.filter(violation => violation.id !== id));
-    if (selectedViolation && selectedViolation.id === id) {
-      setSelectedViolation(null);
+  const handleDeleteViolation = async (id: number) => {
+    //삭제 확인
+    const confirmed = window.confirm('Are you sure you want to delete it?');
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/crud/cars/${id}/`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('삭제 실패');
+
+      setViolations(violations.filter(violation => violation.id !== id));
+      if (selectedViolation && selectedViolation.id === id) {
+        setSelectedViolation(null);
+      }
+    } catch (error) {
+      alert('삭제 중 오류가 발생했습니다.');
+      console.error(error);
     }
   };
 
