@@ -3,6 +3,7 @@ import { Violation } from '../types';
 import { CalendarDays, MapPin, Car, AlertCircle, X } from 'lucide-react';
 import { getDangerLevel } from '../utils/helpers';
 
+
 interface ViolationDetailsProps {
   violation: Violation;
   onStatusChange: (id: number, checked: boolean) => void;
