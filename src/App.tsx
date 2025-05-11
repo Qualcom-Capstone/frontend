@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard';
 import ViolationDetails from './components/ViolationDetails';
 import { Violation } from './types';
 import { mockViolations } from './data/mockData';
+import Swal from 'sweetalert2';
 
 function App() {
   const [violations, setViolations] = useState<Violation[]>([]);
@@ -55,22 +56,32 @@ function App() {
 
   const handleDeleteViolation = async (id: number) => {
     //삭제 확인
-    const confirmed = window.confirm('Are you sure you want to delete it?');
-    if (!confirmed) return;
+    const result = await Swal.fire({
+      title: 'Are you sure you want to delete?',
+      text: "This action cannot be undone.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    });
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(`http://localhost:8000/api/v1/crud/cars/${id}/`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) throw new Error('삭제 실패');
 
-    try {
-      const response = await fetch(`http://localhost:8000/api/v1/crud/cars/${id}/`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error('삭제 실패');
-
-      setViolations(violations.filter(violation => violation.id !== id));
-      if (selectedViolation && selectedViolation.id === id) {
-        setSelectedViolation(null);
+        setViolations(violations.filter(violation => violation.id !== id));
+        if (selectedViolation && selectedViolation.id === id) {
+          setSelectedViolation(null);
+        }
+        Swal.fire('Deleted!', 'The item has been deleted.', 'success');
+      } catch (error) {
+        Swal.fire('Error', 'An error occurred while deleting.', 'error');
+        console.error(error);
       }
-    } catch (error) {
-      alert('삭제 중 오류가 발생했습니다.');
-      console.error(error);
     }
   };
 
