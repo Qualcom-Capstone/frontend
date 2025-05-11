@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard';
 import ViolationDetails from './components/ViolationDetails';
 import { Violation } from './types';
 import { mockViolations } from './data/mockData';
+import Swal from 'sweetalert2';
 
 function App() {
   const [violations, setViolations] = useState<Violation[]>([]);
@@ -40,14 +41,14 @@ function App() {
 
   const handleStatusChange = (id: number, checked: boolean) => {
     setViolations(
-      violations.map((violation) => {
-        if (violation.id === id) {
-          return { ...violation, is_checked: checked};
-        }
-        return violation;
-      })
+        violations.map((violation) => {
+          if (violation.id === id) {
+            return { ...violation, is_checked: checked};
+          }
+          return violation;
+        })
     );
-    
+
     if (selectedViolation && selectedViolation.id === id) {
       setSelectedViolation({ ...selectedViolation, is_checked: checked });
     }
@@ -55,22 +56,32 @@ function App() {
 
   const handleDeleteViolation = async (id: number) => {
     //삭제 확인
-    const confirmed = window.confirm('Are you sure you want to delete it?');
-    if (!confirmed) return;
+    const result = await Swal.fire({
+      title: 'Are you sure you want to delete?',
+      text: "This action cannot be undone.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    });
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(`http://localhost:8000/api/v1/crud/cars/${id}/`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) throw new Error('삭제 실패');
 
-    try {
-      const response = await fetch(`http://localhost:8000/api/v1/crud/cars/${id}/`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error('삭제 실패');
-
-      setViolations(violations.filter(violation => violation.id !== id));
-      if (selectedViolation && selectedViolation.id === id) {
-        setSelectedViolation(null);
+        setViolations(violations.filter(violation => violation.id !== id));
+        if (selectedViolation && selectedViolation.id === id) {
+          setSelectedViolation(null);
+        }
+        Swal.fire('Deleted!', 'The item has been deleted.', 'success');
+      } catch (error) {
+        Swal.fire('Error', 'An error occurred while deleting.', 'error');
+        console.error(error);
       }
-    } catch (error) {
-      alert('삭제 중 오류가 발생했습니다.');
-      console.error(error);
     }
   };
 
@@ -104,41 +115,41 @@ function App() {
     checked: violations.filter(v => v.is_checked).length,
     pendingReview: violations.filter(v => !v.is_checked).length,
     avgSpeed: Math.round(
-      violations.reduce((sum, v) => sum + v.car_speed, 0) / violations.length
+        violations.reduce((sum, v) => sum + v.car_speed, 0) / violations.length
     ),
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-gray-100 flex flex-col">
-      <Header 
-        filterType={filterType} 
-        setFilterType={setFilterType}
-        sortOrder={sortOrder}
-        setSortOrder={setSortOrder}
-      />
-      
-      <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
-        <div className={`flex-1 ${selectedViolation ? 'md:w-2/3' : 'w-full'}`}>
-          <Dashboard 
-            violations={sortedViolations} 
-            stats={stats} 
-            onSelectViolation={setSelectedViolation}
-            onDeleteViolation={handleDeleteViolation}
-            selectedViolationId={selectedViolation?.id}
-          />
-        </div>
-        
-        {selectedViolation && (
-          <div className="md:w-1/3 border-l border-gray-700 h-full overflow-auto">
-            <ViolationDetails 
-              violation={selectedViolation} 
-              onStatusChange={handleStatusChange}
-              onClose={handleCloseDetails}
+      <div className="min-h-screen bg-[#0f172a] text-gray-100 flex flex-col">
+        <Header
+            filterType={filterType}
+            setFilterType={setFilterType}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+        />
+
+        <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+          <div className={`flex-1 ${selectedViolation ? 'md:w-2/3' : 'w-full'}`}>
+            <Dashboard
+                violations={sortedViolations}
+                stats={stats}
+                onSelectViolation={setSelectedViolation}
+                onDeleteViolation={handleDeleteViolation}
+                selectedViolationId={selectedViolation?.id}
             />
           </div>
-        )}
+
+          {selectedViolation && (
+              <div className="md:w-1/3 border-l border-gray-700 h-full overflow-auto">
+                <ViolationDetails
+                    violation={selectedViolation}
+                    onStatusChange={handleStatusChange}
+                    onClose={handleCloseDetails}
+                />
+              </div>
+          )}
+        </div>
       </div>
-    </div>
   );
 }
 
