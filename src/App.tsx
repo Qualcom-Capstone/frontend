@@ -6,6 +6,7 @@ import ViolationDetails from './components/ViolationDetails';
 import { Violation } from './types';
 import { mockViolations } from './data/mockData';
 import Swal from 'sweetalert2';
+import VehicleHistory from './components/VehicleHistory';
 
 function App() {
   const [violations, setViolations] = useState<Violation[]>([]);
@@ -13,6 +14,9 @@ function App() {
   const [filterType, setFilterType] = useState<string>('All Violations');
   const [sortOrder, setSortOrder] = useState<string>('Newest');
   const [loading, setLoading] = useState<boolean>(true);
+  const [showVehicleHistory, setShowVehicleHistory] = useState(false);
+  const [vehicleViolations, setVehicleViolations] = useState<Violation[]>([]);
+  const [searchPlateNumber, setSearchPlateNumber] = useState('');
 
   // /cars/ get 에서 데이터 불러오기
   useEffect(() => {
@@ -84,7 +88,19 @@ function App() {
       }
     }
   };
+  const handleSearchVehicle = () => {
+    if (!searchPlateNumber) return;
 
+    const result = violations.filter(v => v.car_number === searchPlateNumber);
+    setVehicleViolations(result);
+    setShowVehicleHistory(true);
+  };
+
+  const handleCloseVehicleHistory = () => {
+    setShowVehicleHistory(false);
+    setSearchPlateNumber('');
+    setVehicleViolations([]);
+  };
   const handleCloseDetails = () => {
     setSelectedViolation(null);
   };
@@ -126,10 +142,22 @@ function App() {
             setFilterType={setFilterType}
             sortOrder={sortOrder}
             setSortOrder={setSortOrder}
+            searchPlateNumber={searchPlateNumber}
+            setSearchPlateNumber={setSearchPlateNumber}
+            onSearch={handleSearchVehicle}
         />
 
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
           <div className={`flex-1 ${selectedViolation ? 'md:w-2/3' : 'w-full'}`}>
+            {showVehicleHistory && (
+                <div className="p-6">
+                  <VehicleHistory
+                      violations={vehicleViolations}
+                      plateNumber={searchPlateNumber}
+                      onClose={handleCloseVehicleHistory}
+                  />
+                </div>
+            )}
             <Dashboard
                 violations={sortedViolations}
                 stats={stats}
