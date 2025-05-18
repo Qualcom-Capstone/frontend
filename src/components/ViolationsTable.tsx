@@ -9,6 +9,15 @@ interface ViolationsTableProps {
   selectedViolationId?: number;
 }
 
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
+
 const ViolationsTable: React.FC<ViolationsTableProps> = ({ 
   violations, 
   onSelectViolation,
@@ -90,7 +99,7 @@ const ViolationsTable: React.FC<ViolationsTableProps> = ({
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                {violation.created_at}
+                {formatDate(violation.created_at)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 flex space-x-2">
                 <button 
