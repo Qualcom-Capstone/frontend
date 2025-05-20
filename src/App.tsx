@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+  import React, { useState, useEffect } from 'react';
 import { ActivitySquare } from 'lucide-react';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
@@ -7,6 +7,11 @@ import { Violation } from './types';
 import { mockViolations } from './data/mockData';
 import Swal from 'sweetalert2';
 import VehicleHistory from './components/VehicleHistory';
+  import { onMessage } from 'firebase/messaging';
+  import { registerFCM } from './registerFCM';
+  import { messaging } from './firebase';
+  import NotificationCenter from './components/NotificationCenter'; // 위에서 만든 컴포넌트
+
 
 function App() {
   const [violations, setViolations] = useState<Violation[]>([]);
@@ -17,14 +22,14 @@ function App() {
   const [showVehicleHistory, setShowVehicleHistory] = useState(false);
   const [vehicleViolations, setVehicleViolations] = useState<Violation[]>([]);
   const [searchPlateNumber, setSearchPlateNumber] = useState('');
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   // /cars/ get 에서 데이터 불러오기
   useEffect(() => {
     setLoading(true);
-    fetch('http://localhost:8000/api/v1/crud/cars/')
+    fetch(`${API_BASE_URL}/cars`)
         .then(res => res.json())
         .then(data => {
-          // data.results 배열을 사용
           setViolations(data.results);
           setLoading(false);
         })
@@ -32,7 +37,32 @@ function App() {
           console.error('API fetch error:', err);
           setLoading(false);
         });
+
+    // 🔔 푸시 알림 등록
+    registerFCM()
+        .then((token) => {
+          console.log('FCM Token:', token);
+        })
+        .catch((err) => {
+          console.error('FCM registration failed:', err);
+        });
+
+    const unsubscribe = onMessage(messaging, (payload) => {
+      console.log('New FCM message received:', payload);
+
+      Swal.fire({
+        title: payload.notification?.title || '알림 도착',
+        text: payload.notification?.body || '',
+        icon: 'info',
+        timer: 5000,
+      });
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
+
 
   const handleViolationSelect = (violation: Violation) => {
     // 이미 선택된 위반 사항을 다시 클릭하면 닫기
@@ -72,7 +102,7 @@ function App() {
     });
     if (result.isConfirmed) {
       try {
-        const response = await fetch(`http://localhost:8000/api/v1/crud/cars/${id}/`, {
+        const response = await fetch(`${API_BASE_URL}/cars/${id}`, {
           method: 'DELETE',
         });
         if (!response.ok) throw new Error('삭제 실패');
