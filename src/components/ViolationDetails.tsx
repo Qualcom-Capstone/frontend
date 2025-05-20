@@ -10,6 +10,9 @@ interface ViolationDetailsProps {
   onClose: () => void;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+
 const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatusChange, onClose }) => {
   const [isChecked, setIsChecked] = useState(violation.is_checked);
   
@@ -19,7 +22,7 @@ const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatus
 
     try {
       const response = await fetch(
-          `http://localhost:8000/api/v1/crud/cars/${violation.id}/`,
+          `${API_BASE_URL}/cars/${violation.id}/partial-update`,
           {
             method: 'PATCH',
             headers: {

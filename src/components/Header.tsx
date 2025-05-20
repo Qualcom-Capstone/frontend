@@ -1,5 +1,6 @@
 import React from 'react';
 import { ActivitySquare, Search } from 'lucide-react';
+import NotificationCenter from './NotificationCenter';
 
 interface HeaderProps {
   filterType: string;
@@ -40,6 +41,7 @@ const Header: React.FC<HeaderProps> = ({
           </div>
 
           <div className="flex space-x-3">
+            <NotificationCenter />
             <div className="relative">
               <select
                   value={filterType}
