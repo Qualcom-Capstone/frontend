@@ -1,16 +1,13 @@
-  import React, { useState, useEffect } from 'react';
-import { ActivitySquare } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import ViolationDetails from './components/ViolationDetails';
 import { Violation } from './types';
-import { mockViolations } from './data/mockData';
 import Swal from 'sweetalert2';
 import VehicleHistory from './components/VehicleHistory';
-  import { onMessage } from 'firebase/messaging';
-  import { registerFCM } from './registerFCM';
-  import { messaging } from './firebase';
-  import NotificationCenter from './components/NotificationCenter'; // 위에서 만든 컴포넌트
+import { onMessage } from 'firebase/messaging';
+import { registerFCM } from './registerFCM';
+import { messaging } from './firebase';
 
 
 function App() {
