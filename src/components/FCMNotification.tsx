@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { messaging, getToken, onMessage } from "../firebase";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const FCMNotification = () => {
   const [token, setToken] = useState<string | null>(null);
 
@@ -24,7 +26,7 @@ const FCMNotification = () => {
 
             // 3. 백엔드에 토큰 등록
             try {
-              await axios.post("http://localhost:8000/api/v1/crud/fcm/register", {
+              await axios.post(`${API_BASE_URL}/fcm/register`, {
                 token: currentToken,
               });
               console.log("FCM 토큰이 성공적으로 등록되었습니다.");
