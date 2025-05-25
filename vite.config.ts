@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         input: {
           main: "index.html",
-          "firebase-messaging-sw": "public/firebase-messaging-sw.js",
+          "firebase-messaging-sw": "src/firebase-messaging-sw.js",
         },
       },
     },
@@ -28,6 +28,11 @@ export default defineConfig(({ mode }) => {
         appId: env.VITE_FIREBASE_APP_ID,
         measurementId: env.VITE_FIREBASE_MEASUREMENT_ID,
       }),
+    },
+    server: {
+      headers: {
+        "Service-Worker-Allowed": "/",
+      },
     },
   };
 });
