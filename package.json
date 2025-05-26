@@ -4,14 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "generate-config": "node scripts/generate-firebase-config.cjs",
+    "dev": "npm run generate-config && vite",
+    "build": "npm run generate-config && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "axios": "^1.9.0",
     "date-fns": "^3.3.1",
+    "dotenv": "^16.5.0",
     "firebase": "^11.7.3",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
