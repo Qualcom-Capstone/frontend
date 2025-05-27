@@ -155,7 +155,7 @@ function App() {
 
   return (
     <>
-
+      <FCMNotification/>
       <div className="min-h-screen bg-[#0f172a] text-gray-100 flex flex-col">
         <Header
           filterType={filterType}
