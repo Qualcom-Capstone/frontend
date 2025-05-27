@@ -138,7 +138,7 @@ const ViolationDetails: React.FC<ViolationDetailsProps> = ({ violation, onStatus
             <MapPin className="w-4 h-4 text-blue-400 mt-0.5" />
             <div>
               <h3 className="text-xs font-medium text-gray-400">Location</h3>
-              <p className="text-white">{violation.location || '알 수 없음'}</p>
+              <p className="text-white">{violation.location || 'Seoul'}</p>
             </div>
           </div>
 

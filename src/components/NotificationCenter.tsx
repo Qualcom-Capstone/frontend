@@ -35,7 +35,7 @@ const NotificationCenter: React.FC = () => {
                 read: false,
                 plateNumber: data.car_number || '미확인 차량',
                 speed: Number(data.car_speed) || 0,
-                location: data.location || 'Unknown',
+                location: data.location || 'Seoul',
             };
 
             setNotifications(prev => [newNotification, ...prev]);
