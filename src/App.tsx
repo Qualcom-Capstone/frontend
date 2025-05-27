@@ -9,6 +9,7 @@ import { onMessage } from "firebase/messaging";
 import { registerFCM } from "./registerFCM";
 import { messaging } from "./firebase";
 import FCMNotification from "./components/FCMNotification";
+import NotificationCenter from "./components/NotificationCenter";
 
 function App() {
   const [violations, setViolations] = useState<Violation[]>([]);
@@ -45,21 +46,6 @@ function App() {
       .catch((err) => {
         console.error("FCM registration failed:", err);
       });
-
-    const unsubscribe = onMessage(messaging, (payload) => {
-      console.log("New FCM message received:", payload);
-
-      Swal.fire({
-        title: payload.notification?.title || "알림 도착",
-        text: payload.notification?.body || "",
-        icon: "info",
-        timer: 5000,
-      });
-    });
-
-    return () => {
-      unsubscribe();
-    };
   }, []);
 
   const handleViolationSelect = (violation: Violation) => {
@@ -169,7 +155,7 @@ function App() {
 
   return (
     <>
-      <FCMNotification />
+
       <div className="min-h-screen bg-[#0f172a] text-gray-100 flex flex-col">
         <Header
           filterType={filterType}

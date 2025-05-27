@@ -45,25 +45,13 @@ const FCMNotification = () => {
     };
 
     // 4. 포그라운드 메시지 핸들러
-    const unsubscribe = onMessage(messaging, (payload) => {
-      console.log("포그라운드 메시지 수신:", payload);
 
-      // 기본 알림 표시
-      if (payload.notification) {
-        new Notification(payload.notification.title || "알림", {
-          body: payload.notification.body,
-          icon: "/favicon.ico", // 알림 아이콘 경로
-        });
-      }
-    });
 
     // 5. 초기 권한 요청
     requestNotificationPermission();
 
     // 6. 컴포넌트 언마운트 시 정리
-    return () => {
-      unsubscribe();
-    };
+
   }, []);
 
   return null;
