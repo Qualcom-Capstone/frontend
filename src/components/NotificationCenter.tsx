@@ -23,25 +23,29 @@ const NotificationCenter: React.FC = () => {
     // 실시간 수신 알림 등록
     useEffect(() => {
         const unsubscribe = onMessage(messaging, (payload) => {
-            const { plateNumber, speed, location } = payload.data || {};
+            console.log("📬 NotificationCenter 수신됨:", payload);
+
+            const data = payload.data || {};
+
             const newNotification: Notification = {
-                id: Date.now(),
-                message: payload.notification?.body || '새 알림',
+                id: Number(data.id) || Date.now(),
+                message: payload.notification?.body || '🚨 알 수 없는 알림',
                 type: 'violation',
-                timestamp: '방금 전',
+                timestamp: new Date(data.timestamp || Date.now()).toLocaleString(),
                 read: false,
-                plateNumber: plateNumber || '미확인',
-                speed: Number(speed) || 0,
-                location: location || '알 수 없음',
+                plateNumber: data.car_number || '미확인 차량',
+                speed: Number(data.car_speed) || 0,
+                location: data.location || 'Unknown',
             };
+
             setNotifications(prev => [newNotification, ...prev]);
         });
 
         return () => {
-            // clean-up 함수
             unsubscribe();
         };
     }, []);
+
 
     const handleNotificationClick = (id: number) => {
         setNotifications(prev =>
@@ -72,7 +76,7 @@ const NotificationCenter: React.FC = () => {
             {isOpen && (
                 <div className="absolute right-0 mt-2 w-96 bg-gray-900 rounded-lg shadow-lg border border-gray-700 z-50 max-h-[80vh] overflow-y-auto">
                     <div className="p-3 border-b border-gray-700 flex justify-between items-center">
-                        <h3 className="text-sm font-medium text-white">알림 센터</h3>
+                        <h3 className="text-sm font-medium text-white">Notification Center</h3>
                         <button
                             onClick={() => setIsOpen(false)}
                             className="text-gray-400 hover:text-white"
@@ -83,7 +87,7 @@ const NotificationCenter: React.FC = () => {
 
                     {notifications.length === 0 ? (
                         <div className="p-4 text-sm text-gray-400 text-center">
-                            새로운 알림이 없습니다.
+                            There are no new notifications.
                         </div>
                     ) : (
                         notifications.map(notification => (
@@ -110,7 +114,7 @@ const NotificationCenter: React.FC = () => {
                                         </div>
                                         {!notification.read && (
                                             <div className="mt-3 text-xs text-blue-400">
-                                                클릭하여 읽음 표시
+                                                Click to show read
                                             </div>
                                         )}
                                     </div>
